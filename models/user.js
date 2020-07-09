@@ -1,4 +1,6 @@
 'use strict';
+const {hashPassword} = require('../helpers/bcrypt.js')
+
 const {
   Model
 } = require('sequelize');
@@ -29,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         notEmpty: {
           args: true,
-          msg: "Please insert your email!"
+          msg: "Please insert your Email!"
         }
       }
     },
@@ -38,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         notEmpty: {
           args: true,
-          msg: "Please insert your password!"
+          msg: "Please insert your Password!"
         }
       }
     }
