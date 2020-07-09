@@ -1,4 +1,4 @@
-const { UserRecipe } = require ('../models/index.js')
+const { UserRecipe } = require('../models/index.js')
 
 
 class userRecipeController {
@@ -13,9 +13,9 @@ class userRecipeController {
         try {
             res.status(201).json(
                 {
-                    name: createdToDo.name,
-                    ingredient: createdToDo.ingredient,
-                    UserId: createdToDo.UserId
+                    name,
+                    ingredient,
+                    UserId
                 }
             )
         } catch (err) {
@@ -26,12 +26,12 @@ class userRecipeController {
     //GET RECIPE LIST ALL
     static readRecipe(req, res, next) {
         UserRecipe.findAll()
-        .then(result => {
-            res.status(200).json(result)
-        })
-        .catch(err => {
-            next(err);
-        })
+            .then(result => {
+                res.status(200).json(result)
+            })
+            .catch(err => {
+                next(err);
+            })
     }
 
 
@@ -46,7 +46,7 @@ class userRecipeController {
             .catch(err => {
                 next(err)
             })
-    }    
+    }
 
 
 
@@ -56,7 +56,7 @@ class userRecipeController {
         let name = req.body.name;
         let ingredient = req.body.ingredient;
 
-    
+
         UserRecipe.update({
             name,
             ingredient
@@ -97,6 +97,11 @@ class userRecipeController {
             .catch(err => {
                 next(err)
             })
+    }
+
+    //Get spoonacular API data
+    static getSpoonacularData(req, res, next) {
+        
     }
 }
 

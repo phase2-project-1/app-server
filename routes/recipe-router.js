@@ -9,5 +9,6 @@ router.get('/:id', RecipeController.readRecipeById)
 router.put('/:id', RecipeController.updateRecipe) 
 router.delete('/:id', RecipeController.deleteRecipe)
 
+// router.get('/showall', RecipeController.getSpoonacularData)
 
 module.exports = router;
