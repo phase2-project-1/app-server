@@ -2,6 +2,7 @@ const { User } = require('../models/index.js')
 const { hashPassword, comparePassword } = require('../helpers/bcrypt')
 const { signToken, verifyToken } = require('../helpers/jwt.js')
 const { verify } = require('../helpers/google-oauth.js')
+const Mailgun = require('mailgun-js')
 
 class UserController {
     static register(req, res, next) {
@@ -97,9 +98,46 @@ class UserController {
                 })
             }
         } catch (err) {
-            console.log(err)
-            res.send(err)
+            next(err)
         }
+    }
+
+    static sendMail(req, res, next) {
+        let emailTarget = 'rakitpc.pairproject@gmail.com'
+
+        let { email, username, kritik, saran } = req.body
+        let emailContent = `
+        Resep Kita: Kritik & Saran by ${username}
+        ==================================
+
+        Email : ${email}
+        Username : ${username}
+        Kritik : ${kritik}
+        Saran: ${saran}
+
+        ==================================
+
+        `
+        
+        let API_KEY = process.env.MAILGUN_API_KEY;
+        let DOMAIN = process.env.MAILGUN_DOMAIN;
+
+        let mailgun = new Mailgun({ apiKey: API_KEY, domain: DOMAIN });
+        const data = {
+            from: 'mailgun@sandbox710b35b55b724cad928833d39ac6013d.mailgun.org',
+            to: emailTarget,
+            subject: `Resep Kita: Kritik & Saran by ${username}`,
+            text: emailContent
+        };
+
+        mailgun.messages().send(data, (error, body) => {
+            if (error) next(error)
+            else res.status(200).json(body)
+        })
+    }
+
+    static loginFacebook(req, res, next) {
+        
     }
 }
 
