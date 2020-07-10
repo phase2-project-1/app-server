@@ -4,7 +4,6 @@ const { User, UserRecipe } = require('../models/index.js')
 async function authentication(req, res, next) {
     let token = req.headers.token
     if (token) {
-
         try {
             let payload = verifyToken(token)
 
@@ -26,20 +25,21 @@ async function authentication(req, res, next) {
         }
 
     } else {
-        throw { name: "Unauthorized" }
+        next({ name: "Unauthorized" })
     }
 }
 
 async function authorization(req, res, next) {
     let userRecipeId = Number(req.params.id)
     try {
-        let currentToDo = await ToDo.findByPk(userRecipeId)
+        let currentRecipe = await UserRecipe.findByPk(userRecipeId)
 
-        if (currentToDo) {
-            if (currentToDo.UserId == req.currentUser.id) {
+        if (currentRecipe) {
+            if (currentRecipe.UserId == req.currentUser.id) {
                 next();
             } else {
-                throw { name: "Unauthorized" }
+
+                throw { name: "Unauthorized" } 
             }
         } else {
             throw { name: "Not Found" }

@@ -1,25 +1,25 @@
 const { UserRecipe } = require('../models/index.js')
 
-
 class userRecipeController {
 
-
-    //Create TODO
+    //Create RECIPE
     static async createRecipe(req, res, next) {
         let name = req.body.name;
         let ingredient = req.body.ingredient;
+        let imageUrl = req.body.imageUrl
         let UserId = req.currentUser.id;
 
         try {
-            res.status(201).json(
-                {
-                    name,
-                    ingredient,
-                    UserId
-                }
-            )
+            let newRecipe = await UserRecipe.create({
+                name,
+                ingredient,
+                UserId,
+                imageUrl
+            })
+
+            res.status(201).json(newRecipe)
         } catch (err) {
-            next(err);
+            next(err)
         }
     }
 
@@ -35,11 +35,15 @@ class userRecipeController {
     }
 
 
-    //GET RECIPE BY ID
-    static readRecipeById(req, res, next) {
-        let recipeId = Number(req.params.id)
+    //GET ALL RECIPE BY USER ID
+    static readMyRecipe(req, res, next) {
+        let userId = Number(req.currentUser.id)
 
-        UserRecipe.findByPk(recipeId)
+        UserRecipe.findAll({
+            where: {
+                UserId: userId
+            }
+        })
             .then(result => {
                 res.status(200).json(result)
             })
@@ -48,14 +52,29 @@ class userRecipeController {
             })
     }
 
+    //GET RECIPE DETAIL BY RECIPE ID
+    static readRecipeDetail(req, res, next) {
+        let recipeId = Number(req.params.id)
 
+        UserRecipe.findByPk(recipeId)
+            .then(result => {
+                if (result) {
+                    res.status(200).json(result)
+                } else {
+                    throw { name: "Not Found" }
+                }
+            })
+            .catch(err => {
+                next(err)
+            })
+    }
 
     //UPDATE RECIPE
     static updateRecipe(req, res, next) {
         let recipeId = req.params.id
         let name = req.body.name;
         let ingredient = req.body.ingredient;
-
+        let imageUrl = req.body.imageUrl
 
         UserRecipe.update({
             name,
@@ -97,11 +116,6 @@ class userRecipeController {
             .catch(err => {
                 next(err)
             })
-    }
-
-    //Get spoonacular API data
-    static getSpoonacularData(req, res, next) {
-        
     }
 }
 
